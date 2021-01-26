@@ -19,6 +19,7 @@ void UserInput:: read_input(UserInput *obj){
 
 void UserInput:: check_user_input(UserInput* obj){
   string input = obj->buffer;
+  int command_executed=0;
 
   // condition for meta commands that start with a '.' symbol;
   if(input[0] == '.'){
@@ -27,14 +28,26 @@ void UserInput:: check_user_input(UserInput* obj){
         free_object(obj);
         exit(EXIT_SUCCESS);
         break;
-      case(META_INVALID_COMMAND):
+      case(META_COMMAND_INVALID):
         cout<<"Unrecognized Command Entered: "<<input<<endl;
-        break;
     }
   }
-
   // condition for proper sql commands;
-  
+  else{
+    Command command;
+    switch(prepare_db_command(input,&command)){
+      case(COMMAND_SUCCESS):
+        command_executed=1;
+        break;
+      case(COMMAND_UNRECOGNIZED):
+        cout<<"Unrecognized keyword at start of "<<input<<endl;
+        break;
+      default: break;
+    }
 
+    execute_command(&command);
+    if(command_executed==1)
+      cout<<"Executed\n";
+  }
   return ;
 }

@@ -10,9 +10,27 @@ using namespace std;
 
 typedef enum{
     META_COMMAND_SUCCESS,
-    META_INVALID_COMMAND
+    META_COMMAND_INVALID
 } MetaCommandResults;
 
+typedef enum{
+    COMMAND_SUCCESS,
+    COMMAND_UNRECOGNIZED
+} PrepareCommand;
+
+typedef enum{
+    INSERT_COMMAND,
+    SELECT_COMMAND
+} CommandType;
+
+typedef struct {
+    CommandType type;
+}Command;
+
 MetaCommandResults check_meta_command(string &s);
+
+PrepareCommand prepare_db_command(string &s,Command* c);      // prepare result
+
+void execute_command(Command* c);
 
 #endif
