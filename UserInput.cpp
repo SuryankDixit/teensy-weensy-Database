@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "UserInput.h"
+#include "commands.h"
 
 using namespace std;
 
@@ -17,12 +18,23 @@ void UserInput:: read_input(UserInput *obj){
 }
 
 void UserInput:: check_user_input(UserInput* obj){
-  if(obj->buffer == ".exit"){
-    free_object(obj);
-    cout<<"Exiting..."<<endl;
-    exit(EXIT_SUCCESS);
-  }else if(buffer_len>0){
-    cout<<"Invalid Command "<<obj->buffer<<endl;
+  string input = obj->buffer;
+
+  // condition for meta commands that start with a '.' symbol;
+  if(input[0] == '.'){
+    switch(check_meta_command(input)){
+      case(META_COMMAND_SUCCESS):
+        free_object(obj);
+        exit(EXIT_SUCCESS);
+        break;
+      case(META_INVALID_COMMAND):
+        cout<<"Unrecognized Command Entered: "<<input<<endl;
+        break;
+    }
   }
+
+  // condition for proper sql commands;
+  
+
   return ;
 }
