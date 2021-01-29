@@ -2,6 +2,7 @@
 #define USER_INPUT
 
 #include <bits/stdc++.h>
+#include "table.h"
 using namespace std;
 
 class UserInput{
@@ -17,7 +18,7 @@ public:
   ~UserInput(){}
 
   void read_input(UserInput*);
-  void check_user_input(UserInput*);
+  void check_user_input(UserInput*,Table*);
 };
 
 void free_object(UserInput*);
