@@ -1,10 +1,10 @@
 #ifndef COMMANDS
 #define COMMANDS
 
-#include <iostream>
+#include <bits/stdc++.h>
 #include "UserInput.h"
+#include "table.h"
 using namespace std;
-
 
 // Command = Statement;
 
@@ -15,22 +15,41 @@ typedef enum{
 
 typedef enum{
     COMMAND_SUCCESS,
-    COMMAND_UNRECOGNIZED
+    COMMAND_UNRECOGNIZED,
+    COMMAND_TOO_LONG,
+    COMMAND_SYNTAX_ERROR,
 } PrepareCommand;
+
+typedef enum{
+    EXECUTE_SUCCESS,
+    EXECUTE_TABLE_FULL,
+    EXECUTE_INVALID_COMMAND
+} ExecuteCommand;
 
 typedef enum{
     INSERT_COMMAND,
     SELECT_COMMAND
 } CommandType;
 
-typedef struct {
+class Command {
     CommandType type;
-}Command;
+    Row row;
 
-MetaCommandResults check_meta_command(string &s);
+public:
+    
+    MetaCommandResults check_meta_command(string &s);
+    PrepareCommand prepare_insert_command(string &s,Command* c);
+    PrepareCommand prepare_select_command(string &s,Command* c);
+    ExecuteCommand execute_insert_command(Command* c,Table* t);
+    ExecuteCommand execute_select_command(Command* c,Table* t);
+    CommandType check_command_type(Command* c);
+    void test();
+};
+
+MetaCommandResults meta_command(string &s,Command* c);
 
 PrepareCommand prepare_db_command(string &s,Command* c);      // prepare result
 
-void execute_command(Command* c);
+ExecuteCommand execute_command(Command* c,Table* t);
 
 #endif
