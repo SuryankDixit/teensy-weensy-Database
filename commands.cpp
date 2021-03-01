@@ -1,19 +1,24 @@
 #include <bits/stdc++.h>
+#include<stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include "table.h"
 #include "commands.h"
 
 using namespace std;
 
-MetaCommandResults Command:: check_meta_command(string &input){
+
+MetaCommandResults Command:: check_meta_command(string &input,Table* table){
     if(input == ".exit"){
+        db_close(table);
         return META_COMMAND_SUCCESS;
     }else{
         return META_COMMAND_INVALID;
     }
 }
 
-MetaCommandResults meta_command(string &s,Command* c){
-    return c->check_meta_command(s);
+MetaCommandResults meta_command(string &s,Command* c,Table* table){
+    return c->check_meta_command(s,table);
 }
 
 PrepareCommand Command:: prepare_insert_command(string &s,Command* c){
