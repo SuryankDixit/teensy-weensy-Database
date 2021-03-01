@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 #include "UserInput.h"
 #include "table.h"
+#include <stdio.h>
+#include <sys/types.h>
 
 using namespace std;
 
@@ -14,7 +16,6 @@ int main(int argc, char* argv[]) {
 
   char* filename = argv[1];
   Table* table = table->db_open(filename);
-  //cout<<table->get_num_rows();
   while(1){
     cout<<"db > ";
     user_buffer->read_input(user_buffer);

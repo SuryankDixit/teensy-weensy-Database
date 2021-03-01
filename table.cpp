@@ -1,6 +1,9 @@
 #include<bits/stdc++.h>
+#include<stdio.h>
+#include <unistd.h>
 #include<errno.h>
 #include<fcntl.h>
+#include <sys/types.h>
 #include<sys/stat.h>
 #include "table.h"
 
@@ -69,11 +72,13 @@ void* get_page(Pager* pager, uint32_t page_num) {
      }
 
      if (page_num <= num_pages) {
-         cout<<endl<<lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_SET)<<endl;
+         lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_SET);
+        //  cout<<lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_END)<<endl;
          ssize_t bytes_read = read(pager->file_descriptor, page, PAGE_SIZE);
+        //  cout<<bytes_read<<" ";
          if (bytes_read == -1) {
-     	printf("Error reading file: %d\n", errno);
-     	exit(EXIT_FAILURE);
+            printf("Error reading file: %d\n", errno);
+            exit(EXIT_FAILURE);
          }
      }
 
@@ -83,7 +88,7 @@ void* get_page(Pager* pager, uint32_t page_num) {
   return pager->pages[page_num];
 }
 
-void pager_flush(Pager* pager, uint32_t page_num, uint32_t size) {
+void pager_flush(Pager* pager, uint32_t page_num, uint32_t page_size) {
   if (pager->pages[page_num] == NULL) {
      printf("Tried to flush null page\n");
      exit(EXIT_FAILURE);
@@ -98,7 +103,7 @@ void pager_flush(Pager* pager, uint32_t page_num, uint32_t size) {
   }
 
   ssize_t bytes_written = write(
-     pager->file_descriptor, pager->pages[page_num], size
+     pager->file_descriptor, pager->pages[page_num], page_size
      );
 
   if (bytes_written == -1) {
@@ -151,11 +156,7 @@ void db_close(Table* table) {
 
 void* Table :: allocate_row(Table* table ,uint32_t row_num){
     uint32_t page_num = row_num / ROWS_PER_PAGE;           // find page number to add row;
- /*   void *page = table->pages[page_num];
-    if(page == nullptr){
-        page = table->pages[page_num] = malloc(PAGE_SIZE);
-    }       */
-    cout<<page_num<<endl;
+    // cout<<page_num<<endl;
     void *page = get_page(table->pager, page_num);
     uint32_t row_offset = row_num % ROWS_PER_PAGE;
     uint32_t byte_offset = row_offset * ROW_SIZE;
@@ -167,7 +168,7 @@ void Row :: serialize_data(Row* source, void* destination){
     memcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
     memcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
 }
-    
+  
 void Row :: deserialize_data(void* source,Row* destination){
     memcpy(&(destination->id), source + ID_OFFSET, ID_SIZE);
     memcpy(&(destination->username), source + USERNAME_OFFSET, USERNAME_SIZE);

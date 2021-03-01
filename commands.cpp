@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
+#include<stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include "table.h"
 #include "commands.h"
 

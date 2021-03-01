@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 #include "UserInput.h"
 #include "commands.h"
+#include <stdio.h>
+#include <sys/types.h>
 
 using namespace std;
 
