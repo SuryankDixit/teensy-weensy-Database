@@ -59,16 +59,52 @@ public:
 
     // Rows should not cross page boundaries. Since pages probably won’t exist next to each other in memory
     // this function will return the base address of the row where we will append our row in table
-    void* allocate_row(Table* t,uint32_t num_rows);
+    Pager* get_pager();
+    Table* db_open(const char*);
+    uint32_t get_num_rows();
+    void set_num_rows();
+};
+
+
+class Cursor{
+    Table* table;
+    uint32_t num_rows;
+    
+public:
+
+    Cursor(){}
+    Cursor(Table* table , int num_rows,bool status){
+        this->table = table;
+        this->num_rows = num_rows;
+        this->end_of_table = status;
+    }
+    ~Cursor(){}
+    
+    bool end_of_table;      // position just after the last element
+
+    void* cursor_position(Cursor* cursor);
+
+    void advance_cursor(Cursor* cursor);
 
     uint32_t get_num_rows();
     void set_num_rows();
-    Pager* get_pager();
-    Table* db_open(const char*);
-
+    Table* get_table();
 };
+
+// creates new cursors;
+static Cursor* table_start(Table* table){
+    Cursor* cursor = new Cursor(table,0,table->get_num_rows()==0);
+    return cursor;
+}
+
+static Cursor* table_end(Table* table){
+    Cursor* cursor = new Cursor(table,table->get_num_rows(),true);
+    return cursor;
+}
 
 void db_close(Table*);
 void pager_flush(Pager* pager, uint32_t page_num, uint32_t size);
+void* get_page(Pager* pager, uint32_t page_num);
+Pager* pager_open(const char* filename);
 
 #endif

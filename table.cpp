@@ -38,19 +38,6 @@ Pager* pager_open(const char* filename)
 
   return pager;
 } 
-
-Table* Table :: db_open(const char* filename)
-{
-    Pager* pager = pager_open(filename);
-    uint32_t num_rows = pager->file_length / ROW_SIZE;
-
-    Table* table = new Table;
-    table->pager = pager;
-    table->num_rows = num_rows;
-
-    return table;
-}
-
  
 
 void* get_page(Pager* pager, uint32_t page_num) {
@@ -154,14 +141,65 @@ void db_close(Table* table) {
   free(table);
 }
 
-void* Table :: allocate_row(Table* table ,uint32_t row_num){
+Table* Table :: db_open(const char* filename)
+{
+    Pager* pager = pager_open(filename);
+    uint32_t num_rows = pager->file_length / ROW_SIZE;
+
+    Table* table = new Table;
+    table->pager = pager;
+    table->num_rows = num_rows;
+
+    return table;
+}
+
+void* Cursor :: cursor_position(Cursor* cusror){
+    uint32_t row_num = cusror->get_num_rows();
     uint32_t page_num = row_num / ROWS_PER_PAGE;           // find page number to add row;
-    // cout<<page_num<<endl;
-    void *page = get_page(table->pager, page_num);
+    Table* table = cusror->get_table();
+    void *page = get_page(table->get_pager(), page_num);
     uint32_t row_offset = row_num % ROWS_PER_PAGE;
     uint32_t byte_offset = row_offset * ROW_SIZE;
     return page+byte_offset;
 }
+
+
+void Cursor :: advance_cursor(Cursor* cursor){
+    cursor->num_rows += 1;
+    if(cursor->num_rows >= cursor->table->get_num_rows()){
+        cursor->end_of_table = true;
+    }
+}
+
+
+Pager* Table :: get_pager(){
+    return this->pager;
+}
+
+void Table :: set_num_rows(){
+    this->num_rows++;
+    return;
+}
+
+uint32_t Table :: get_num_rows(){
+    return this->num_rows;
+}
+
+
+void Cursor :: set_num_rows(){
+    this->num_rows++;
+    return;
+}
+
+uint32_t Cursor :: get_num_rows(){
+    return this->num_rows;
+}
+
+Table* Cursor :: get_table(){
+    return this->table;
+}
+
+
 
 void Row :: serialize_data(Row* source, void* destination){
     memcpy(destination+ID_OFFSET ,&(source->id), ID_SIZE);
@@ -179,18 +217,3 @@ void Row :: deserialize_data(void* source,Row* destination){
 void Row :: print_row(Row* row){
     printf("(%d, %s, %s)\n", row->id, row->username, row->email);
 }
-
-
-void Table :: set_num_rows(){
-    this->num_rows++;
-    return;
-}
-
-uint32_t Table :: get_num_rows(){
-    return this->num_rows;
-}
-
-Pager* Table :: get_pager(){
-    return this->pager;
-}
-
