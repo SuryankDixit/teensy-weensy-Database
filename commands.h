@@ -37,7 +37,7 @@ class Command {
 
 public:
     
-    MetaCommandResults check_meta_command(string &s);
+    MetaCommandResults check_meta_command(string &s,Table*);
     PrepareCommand prepare_insert_command(string &s,Command* c);
     PrepareCommand prepare_select_command(string &s,Command* c);
     ExecuteCommand execute_insert_command(Command* c,Table* t);
@@ -46,7 +46,7 @@ public:
     void test();
 };
 
-MetaCommandResults meta_command(string &s,Command* c);
+MetaCommandResults meta_command(string &s,Command* c,Table*);
 
 PrepareCommand prepare_db_command(string &s,Command* c);      // prepare result
 

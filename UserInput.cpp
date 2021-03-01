@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 #include "UserInput.h"
 #include "commands.h"
+#include <stdio.h>
+#include <sys/types.h>
 
 using namespace std;
 
@@ -23,7 +25,7 @@ void UserInput:: check_user_input(UserInput* obj,Table* table){
   Command command;
   // condition for meta commands that start with a '.' symbol;
   if(input[0] == '.'){
-    switch(meta_command(input,&command)){
+    switch(meta_command(input,&command,table)){
       case(META_COMMAND_SUCCESS):
         free_object(obj);
         exit(EXIT_SUCCESS);

@@ -1,5 +1,7 @@
 # Prerequisites
 *.d
+db1
+db2
 
 # Compiled Object files
 *.slo
