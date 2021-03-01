@@ -40,18 +40,35 @@ const uint32_t ROWS_PER_PAGE = PAGE_SIZE / ROW_SIZE;       // 14 row per page
 const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * TABLE_MAX_PAGES;    // 1400 max rows in one table;
 
 
+/*class Pager{
+    public:
+        int file_descriptor;
+        uint32_t file_length;
+        void* pages[TABLE_MAX_PAGES];
+        Pager* pager_open(const char*);
+};
+        */
+
+typedef struct {
+  int file_descriptor;
+  uint32_t file_length;
+  void* pages[TABLE_MAX_PAGES];
+} Pager;
+
 class Table{
     uint32_t num_rows;
-    void *pages[TABLE_MAX_PAGES];
+//    void *pages[TABLE_MAX_PAGES];
+    Pager* pager;
 public:
-    Table(){
+/*    Table(){
         this->num_rows=0;
         for(uint32_t i =0;i<TABLE_MAX_PAGES;i++){
             this->pages[i] = nullptr;
         }
-    }
+    }           */
 
-    ~Table(){}
+ //   ~Table(){}
+    
 
     // Rows should not cross page boundaries. Since pages probably won’t exist next to each other in memory
     // this function will return the base address of the row where we will append our row in table
@@ -59,8 +76,12 @@ public:
 
     uint32_t get_num_rows();
     void set_num_rows();
-    void* get_pages();
+    Pager* get_pager();
+    Table* db_open(const char*);
 
 };
+
+void db_close(Table*);
+void pager_flush(Pager* pager, uint32_t page_num, uint32_t size);
 
 #endif
