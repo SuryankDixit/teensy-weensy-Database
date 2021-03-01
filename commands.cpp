@@ -47,11 +47,13 @@ PrepareCommand Command:: prepare_insert_command(string &s,Command* c){
     try{
         id = stoi(id_string);
     }catch(exception &err){
-        cout << "Invalid query format "<<endl;
+      /*  cout << "Invalid query format "<<endl;
         cout<<"Table Structure is : int>0     string(32)      string(255)\n";
         cout<<"Exiting..."<<endl;
         usleep(10000);
         exit(0);
+        */
+       return COMMAND_SYNTAX_ERROR;
     }
 
     if(username.size()> NAME_SIZE)
