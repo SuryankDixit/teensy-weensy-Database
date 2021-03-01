@@ -2,7 +2,6 @@
 #include<stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include "table.h"
 #include "commands.h"
 
 using namespace std;
@@ -100,9 +99,14 @@ ExecuteCommand Command :: execute_insert_command(Command* c,Table* t){
         return EXECUTE_TABLE_FULL;
     }
     Row *row = &(c->row);
+    Cursor* cursor = new Cursor();
+    cursor = table_end(t);
+
     // Serialization is the process of turning an object in memory into a stream of bytes so you can do stuff like store it on disk or send it over the network.
-    c->row.serialize_data(row, t->allocate_row(t , t->get_num_rows()));
+    c->row.serialize_data(row, cursor->cursor_position(cursor));
     t->set_num_rows();
+
+    free(cursor);
 
     return EXECUTE_SUCCESS;
 }
@@ -110,9 +114,13 @@ ExecuteCommand Command :: execute_insert_command(Command* c,Table* t){
 ExecuteCommand Command :: execute_select_command(Command* c,Table* t){
     
     Row row;
-    for (uint32_t i = 0; i < t->get_num_rows(); i++) {
-        c->row.deserialize_data(t->allocate_row(t,i),&row);
+    Cursor* cursor = new Cursor();
+    cursor = table_start(t);
+
+    while(!cursor->end_of_table) {
+        c->row.deserialize_data(cursor->cursor_position(cursor),&row);
         c->row.print_row(&row);
+        cursor->advance_cursor(cursor);
     }
     return EXECUTE_SUCCESS;
 }
