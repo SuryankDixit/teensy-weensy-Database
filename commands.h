@@ -23,7 +23,8 @@ typedef enum{
 typedef enum{
     EXECUTE_SUCCESS,
     EXECUTE_TABLE_FULL,
-    EXECUTE_INVALID_COMMAND
+    EXECUTE_INVALID_COMMAND,
+    EXECUTE_DUPLICATE_KEY
 } ExecuteCommand;
 
 typedef enum{
