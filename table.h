@@ -75,37 +75,6 @@ const uint32_t LEAF_NODE_SPACE_FOR_CELLS = PAGE_SIZE - LEAF_NODE_HEADER_SIZE;
 const uint32_t LEAF_NODE_MAX_CELLS = LEAF_NODE_SPACE_FOR_CELLS / LEAF_NODE_CELL_SIZE;
 
 
-static uint32_t* leaf_node_num_cells(void* node) {
-  void* ptr = node + LEAF_NODE_NUM_CELLS_OFFSET;
-  // cout<< *((uint32_t*)ptr)<<" ";
-  return (uint32_t*)ptr;
-}
-
-static void* leaf_node_cell(void* node, uint32_t cell_num) {
-  return node + LEAF_NODE_HEADER_SIZE + cell_num * LEAF_NODE_CELL_SIZE;
-}
-
-static uint32_t* leaf_node_key(void* node, uint32_t cell_num) {
-  void* ptr = leaf_node_cell(node, cell_num);
-  return (uint32_t*)ptr;
-}
-
-static void* leaf_node_value(void* node, uint32_t cell_num) {
-  return leaf_node_cell(node, cell_num) + LEAF_NODE_KEY_SIZE;
-}
-
-static void initialize_leaf_node(void* node) { 
-    *leaf_node_num_cells(node) = 0; 
-}
-
-static uint32_t* leaf_node_next_leaf(void* node) {
-  void* ptr = node + LEAF_NODE_NEXT_LEAF_OFFSET;
-  return (uint32_t*)ptr;
-}
-
-
-
-
 typedef struct {
   int file_descriptor;
   uint32_t file_length;
@@ -158,6 +127,41 @@ Pager* pager_open(const char* filename);
 
 
 void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value);
+Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key);
+Cursor* table_find(Table* table, uint32_t key);
+NodeType get_node_type(void* node);
+void set_node_type(void* node, NodeType type);
+
+
+
+static uint32_t* leaf_node_num_cells(void* node) {
+  void* ptr = node + LEAF_NODE_NUM_CELLS_OFFSET;
+  return (uint32_t*)ptr;
+}
+
+static void* leaf_node_cell(void* node, uint32_t cell_num) {
+  return node + LEAF_NODE_HEADER_SIZE + cell_num * LEAF_NODE_CELL_SIZE;
+}
+
+static uint32_t* leaf_node_key(void* node, uint32_t cell_num) {
+  void* ptr = leaf_node_cell(node, cell_num);
+  return (uint32_t*)ptr;
+}
+
+static void* leaf_node_value(void* node, uint32_t cell_num) {
+  return leaf_node_cell(node, cell_num) + LEAF_NODE_KEY_SIZE;
+}
+
+static void initialize_leaf_node(void* node) {
+  set_node_type(node, NODE_LEAF);
+  *leaf_node_num_cells(node) = 0;
+}
+
+static uint32_t* leaf_node_next_leaf(void* node) {
+  void* ptr = node + LEAF_NODE_NEXT_LEAF_OFFSET;
+  return (uint32_t*)ptr;
+}
+
 
 
 
@@ -174,17 +178,17 @@ static Cursor* table_start(Table* table){
     return cursor;
 }
 
-static Cursor* table_end(Table* table){
-    Cursor* cursor = new Cursor();
-    cursor->table = table;
-    cursor->page_num = table->get_root();
+// static Cursor* table_end(Table* table){
+//     Cursor* cursor = new Cursor();
+//     cursor->table = table;
+//     cursor->page_num = table->get_root();
 
-    void* root = get_page(table->get_pager(),table->get_root());
-    uint32_t cell_num = *leaf_node_num_cells(root);
-    cursor->cell_num = cell_num;
-    cursor->end_of_table = true;
-    return cursor;
-}
+//     void* root = get_page(table->get_pager(),table->get_root());
+//     uint32_t cell_num = *leaf_node_num_cells(root);
+//     cursor->cell_num = cell_num;
+//     cursor->end_of_table = true;
+//     return cursor;
+// }
 
 static void print_leaf_node(void* node) {
   uint32_t num_cells = *leaf_node_num_cells(node);
