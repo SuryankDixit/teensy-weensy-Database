@@ -11,6 +11,14 @@ MetaCommandResults Command:: check_meta_command(string &input,Table* table){
     if(input == ".exit"){
         db_close(table);
         return META_COMMAND_SUCCESS;
+    }else if(input == ".btree"){
+        cout<<"Tree:\n";
+        print_leaf_node(get_page(table->get_pager(),0));
+        return META_COMMAND_SUCCESS;
+    }else if(input == ".constants"){
+        cout<<"Constants:\n";
+        print_constants();
+        return META_COMMAND_SUCCESS;
     }else{
         return META_COMMAND_INVALID;
     }
@@ -97,17 +105,26 @@ CommandType Command :: check_command_type(Command* c){
 
 
 ExecuteCommand Command :: execute_insert_command(Command* c,Table* t){
-    if(t->get_num_rows() >= TABLE_MAX_ROWS){
+
+    // if(t->get_num_rows() >= TABLE_MAX_ROWS){
+    //     return EXECUTE_TABLE_FULL;
+    // }
+    void* node = get_page(t->get_pager(), t->get_root());
+    // cout<<*leaf_node_num_cells(node)<<" "
+    if (*leaf_node_num_cells(node) >= LEAF_NODE_MAX_CELLS) {
+        // cout<<*leaf_node_num_cells(node)<<" "<< LEAF_NODE_MAX_CELLS<<endl;
         return EXECUTE_TABLE_FULL;
-    }
+   }
+//    cout<<*leaf_node_num_cells(node)<<endl;
     Row *row = &(c->row);
     Cursor* cursor = new Cursor();
     cursor = table_end(t);
 
     // Serialization is the process of turning an object in memory into a stream of bytes so you can do stuff like store it on disk or send it over the network.
-    c->row.serialize_data(row, cursor->cursor_position(cursor));
-    t->set_num_rows();
-
+    // c->row.serialize_data(row, cursor->cursor_position(cursor));
+    // t->set_num_rows();
+    leaf_node_insert(cursor,row->id,row);
+    // cout<<*leaf_node_num_cells(node)<<" "<< LEAF_NODE_MAX_CELLS<<endl;
     free(cursor);
 
     return EXECUTE_SUCCESS;
@@ -124,6 +141,7 @@ ExecuteCommand Command :: execute_select_command(Command* c,Table* t){
         c->row.print_row(&row);
         cursor->advance_cursor(cursor);
     }
+    free(cursor);
     return EXECUTE_SUCCESS;
 }
 
