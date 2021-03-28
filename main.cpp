@@ -9,20 +9,20 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
- // Table* table = new Table;
+  Table* table = new Table;
   UserInput *user_buffer = new UserInput;
   if (argc < 2) {
-    printf("Must supply a database filename.\n");
+    printf("Supply a database filename as an argument.\n");
     exit(EXIT_FAILURE);
   }
 
   char* filename = argv[1];
-  Table* table = table->db_open(filename);
+  Table* t = table->db_open(filename);
   while(1){
     cout<<"db > ";
     user_buffer->read_input(user_buffer);
 
-    user_buffer->check_user_input(user_buffer,table);
+    user_buffer->check_user_input(user_buffer,t);
   }
   return 0;
 }
