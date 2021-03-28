@@ -62,6 +62,9 @@ void UserInput:: check_user_input(UserInput* obj,Table* table){
         case (EXECUTE_TABLE_FULL):
           cout<<"Table Full Error\n";
           break;
+        case (EXECUTE_DUPLICATE_KEY):
+          cout<<"Duplicate Key Insertion\n";
+          break;
       }
     }
   }
