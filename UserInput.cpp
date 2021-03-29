@@ -24,11 +24,14 @@ void UserInput:: check_user_input(UserInput* obj,Table* table){
   int command_parsed_successfully=0;
   Command command;
   // condition for meta commands that start with a '.' symbol;
+  if(input == ".exit"){
+        db_close(table);
+        free_object(obj);
+        exit(EXIT_SUCCESS);
+  }
   if(input[0] == '.'){
     switch(meta_command(input,&command,table)){
       case(META_COMMAND_SUCCESS):
-        free_object(obj);
-        exit(EXIT_SUCCESS);
         break;
       case(META_COMMAND_INVALID):
         cout<<"Unrecognized Command Entered: "<<input<<endl;
