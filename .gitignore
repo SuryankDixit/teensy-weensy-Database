@@ -5,6 +5,8 @@ db2
 db3
 db4
 db5
+*.txt
+
 
 # Compiled Object files
 *.slo
