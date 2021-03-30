@@ -151,6 +151,7 @@ bool is_node_root(void* node);
 void set_node_root(void* node, bool is_root);
 void create_new_root(Table* table, uint32_t right_child_page_num);
 void leaf_node_split_and_insert(Cursor* c, uint32_t k, Row* r);
+Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key);
 
 
 static uint32_t* leaf_node_num_cells(void* node) {
@@ -171,15 +172,16 @@ static void* leaf_node_value(void* node, uint32_t cell_num) {
   return leaf_node_cell(node, cell_num) + LEAF_NODE_KEY_SIZE;
 }
 
+static uint32_t* leaf_node_next_leaf(void* node) {
+  void* ptr = node + LEAF_NODE_NEXT_LEAF_OFFSET;
+  return (uint32_t*)ptr;
+}
+
 static void initialize_leaf_node(void* node) {
   set_node_type(node, NODE_LEAF);
   set_node_root(node, false);
   *leaf_node_num_cells(node) = 0;
-}
-
-static uint32_t* leaf_node_next_leaf(void* node) {
-  void* ptr = node + LEAF_NODE_NEXT_LEAF_OFFSET;
-  return (uint32_t*)ptr;
+  *leaf_node_next_leaf(node) = 0;  // 0 represents no sibling
 }
 
 
@@ -237,15 +239,16 @@ static uint32_t get_node_max_key(void* node) {
 
 // creates new cursors;
 static Cursor* table_start(Table* table){
-    Cursor* cursor = new Cursor();
-    cursor->table = table;
-    cursor->page_num = table->get_root();
+    // Cursor* cursor = new Cursor();
+    return table_find(table,0);
+    // cursor->table = table;
+    // cursor->page_num = table->get_root();
 
-    void* root = get_page(table->get_pager(),table->get_root());
-    uint32_t num_cells = *leaf_node_num_cells(root);
-    cursor->end_of_table = (num_cells==0);
+    // void* node = get_page(table->get_pager(),cursor->page_num);
+    // uint32_t num_cells = *leaf_node_num_cells(node);
+    // cursor->end_of_table = (num_cells==0);
 
-    return cursor;
+    // return cursor;
 }
 
 // static Cursor* table_end(Table* table){
