@@ -227,4 +227,3 @@ void set_node_root(void* node, bool is_root) {
   uint8_t value = is_root;
   *((uint8_t*)(node + IS_ROOT_OFFSET)) = value;
 }
-
