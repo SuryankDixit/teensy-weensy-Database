@@ -89,6 +89,8 @@ const uint32_t LEAF_NODE_LEFT_SPLIT_COUNT = (LEAF_NODE_MAX_CELLS + 1) - LEAF_NOD
 const uint32_t INTERNAL_NODE_KEY_SIZE = sizeof(uint32_t);
 const uint32_t INTERNAL_NODE_CHILD_SIZE = sizeof(uint32_t);
 const uint32_t INTERNAL_NODE_CELL_SIZE = INTERNAL_NODE_CHILD_SIZE + INTERNAL_NODE_KEY_SIZE;
+const uint32_t INTERNAL_NODE_MAX_CELLS = 500;
+
 
 typedef struct {
   int file_descriptor;
@@ -152,6 +154,9 @@ void set_node_root(void* node, bool is_root);
 void create_new_root(Table* table, uint32_t right_child_page_num);
 void leaf_node_split_and_insert(Cursor* c, uint32_t k, Row* r);
 Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key);
+void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key);
+uint32_t internal_node_find_child(void* node, uint32_t key);
+void internal_node_insert(Table* table, uint32_t parent_page_num,uint32_t child_page_num);
 
 
 static uint32_t* leaf_node_num_cells(void* node) {
@@ -165,6 +170,7 @@ static void* leaf_node_cell(void* node, uint32_t cell_num) {
 
 static uint32_t* leaf_node_key(void* node, uint32_t cell_num) {
   void* ptr = leaf_node_cell(node, cell_num);
+  // cout<<ptr<<" "<<(uint32_t*)ptr;
   return (uint32_t*)ptr;
 }
 
@@ -217,7 +223,8 @@ static uint32_t* internal_node_child(void* node, uint32_t child_num) {
 }
 
 static uint32_t* internal_node_key(void* node, uint32_t key_num) {
-  return internal_node_cell(node, key_num) + INTERNAL_NODE_CHILD_SIZE;
+  void* ptr = (void*)internal_node_cell(node, key_num) + INTERNAL_NODE_CHILD_SIZE;
+  return (uint32_t*)ptr;
 }
 
 static void initialize_internal_node(void* node) {
@@ -237,10 +244,19 @@ static uint32_t get_node_max_key(void* node) {
 }
 
 
+static uint32_t* node_parent(void* node) { 
+  void *ptr = node + PARENT_POINTER_OFFSET; 
+  return (uint32_t*)ptr;
+}
+
 // creates new cursors;
 static Cursor* table_start(Table* table){
     // Cursor* cursor = new Cursor();
-    return table_find(table,0);
+    Cursor* cursor = table_find(table, 0);
+    void* node = get_page(table->get_pager(), cursor->page_num);
+    uint32_t num_cells = *leaf_node_num_cells(node);
+    cursor->end_of_table = (num_cells == 0);
+    return cursor;
     // cursor->table = table;
     // cursor->page_num = table->get_root();
 
