@@ -105,20 +105,22 @@ CommandType Command :: check_command_type(Command* c){
 
 ExecuteCommand Command :: execute_insert_command(Command* c,Table* t){
 
-    void* node = get_page(t->get_pager(), t->get_root());
-    uint32_t num_cells = *leaf_node_num_cells(node);    // number of cells in node
-
-    // if (num_cells >= LEAF_NODE_MAX_CELLS) {
-    //     return EXECUTE_TABLE_FULL;
-    // }
-    
     Row *row = &(c->row);
     Cursor* cursor = new Cursor();
     uint32_t new_key = row->id;
     cursor = table_find(t,new_key);
 
+    void* node = get_page(t->get_pager(), cursor->page_num);
+    uint32_t num_cells = *leaf_node_num_cells(node);    // number of cells in node
+
+    // if (num_cells >= LEAF_NODE_MAX_CELLS) {
+    //     return EXECUTE_TABLE_FULL;
+    // }
+
+    // cout<<cursor->cell_num<<"   "<<num_cells<<endl;
     if(cursor->cell_num < num_cells){
         uint32_t key_at_index = *leaf_node_key(node, cursor->cell_num);
+        cout<<key_at_index<<"   "<<new_key<<endl;
         if (key_at_index == new_key) {
         return EXECUTE_DUPLICATE_KEY;
      }
