@@ -37,14 +37,13 @@ void UserInput:: check_user_input(UserInput* obj,Table* table){
         cout<<"Unrecognized Command Entered: "<<input<<endl;
     }
   }
-  // condition for proper sql commands;
+  // Parsing of Commands:
   else{
     switch(prepare_db_command(input,&command)){
       case(COMMAND_SUCCESS):
         command_parsed_successfully=1;
         break;
       case(COMMAND_UNRECOGNIZED):
-//        cout<<"Unrecognized keyword at start of "<<input<<endl;
            cout<<"Unrecognized Command Entered: "<<input<<endl;
         break;
       case(COMMAND_SYNTAX_ERROR):

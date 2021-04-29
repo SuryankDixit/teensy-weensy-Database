@@ -43,11 +43,13 @@ const uint32_t ROW_SIZE = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
 
 #define TABLE_MAX_PAGES 100
 const uint32_t PAGE_SIZE = 4096;                        // page size 4 kilobytes because it’s the same size as a page used in the virtual memory systems of most computer architectures
-// const uint32_t ROWS_PER_PAGE = PAGE_SIZE / ROW_SIZE;       // 14 row per page
-// const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * TABLE_MAX_PAGES;    // 1400 max rows in one table;
 
 
-//Common Node Header Layout
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------COMMON NODE HEADER LAYOUT------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 const uint32_t NODE_TYPE_SIZE = sizeof(uint8_t);
 const uint32_t NODE_TYPE_OFFSET = 0;
 const uint32_t IS_ROOT_SIZE = sizeof(uint8_t);
@@ -56,7 +58,11 @@ const uint32_t PARENT_POINTER_SIZE = sizeof(uint32_t);
 const uint32_t PARENT_POINTER_OFFSET = IS_ROOT_OFFSET + IS_ROOT_SIZE;
 const uint8_t COMMON_NODE_HEADER_SIZE = NODE_TYPE_SIZE + IS_ROOT_SIZE + PARENT_POINTER_SIZE;
 
-//Internal Node Header Layout
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------INTERNAL NODE---------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Internal Node Header Layout
 const uint32_t INTERNAL_NODE_NUM_KEYS_SIZE = sizeof(uint32_t);
 const uint32_t INTERNAL_NODE_NUM_KEYS_OFFSET = COMMON_NODE_HEADER_SIZE;
 const uint32_t INTERNAL_NODE_RIGHT_CHILD_SIZE = sizeof(uint32_t);
@@ -65,6 +71,17 @@ const uint32_t INTERNAL_NODE_RIGHT_CHILD_OFFSET =
 const uint32_t INTERNAL_NODE_HEADER_SIZE = COMMON_NODE_HEADER_SIZE + INTERNAL_NODE_NUM_KEYS_SIZE + INTERNAL_NODE_RIGHT_CHILD_SIZE;
 
 
+
+// Internal Node Body Layout
+const uint32_t INTERNAL_NODE_KEY_SIZE = sizeof(uint32_t);
+const uint32_t INTERNAL_NODE_CHILD_SIZE = sizeof(uint32_t);
+const uint32_t INTERNAL_NODE_CELL_SIZE = INTERNAL_NODE_CHILD_SIZE + INTERNAL_NODE_KEY_SIZE;
+const uint32_t INTERNAL_NODE_MAX_CELLS = 500;
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------LEAF NODE------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Leaf Node Header Layout
 const uint32_t LEAF_NODE_NUM_CELLS_SIZE = sizeof(uint32_t);
 const uint32_t LEAF_NODE_NUM_CELLS_OFFSET = COMMON_NODE_HEADER_SIZE;
@@ -85,11 +102,12 @@ const uint32_t LEAF_NODE_MAX_CELLS = LEAF_NODE_SPACE_FOR_CELLS / LEAF_NODE_CELL_
 const uint32_t LEAF_NODE_RIGHT_SPLIT_COUNT = (LEAF_NODE_MAX_CELLS + 1) / 2;
 const uint32_t LEAF_NODE_LEFT_SPLIT_COUNT = (LEAF_NODE_MAX_CELLS + 1) - LEAF_NODE_RIGHT_SPLIT_COUNT;
 
-// Internal Node Body Layout
-const uint32_t INTERNAL_NODE_KEY_SIZE = sizeof(uint32_t);
-const uint32_t INTERNAL_NODE_CHILD_SIZE = sizeof(uint32_t);
-const uint32_t INTERNAL_NODE_CELL_SIZE = INTERNAL_NODE_CHILD_SIZE + INTERNAL_NODE_KEY_SIZE;
-const uint32_t INTERNAL_NODE_MAX_CELLS = 500;
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------CLASSES AND STRUCTURES----------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 typedef struct {
@@ -141,22 +159,52 @@ void db_close(Table*);
 void pager_flush(Pager* pager, uint32_t page_num);
 void* get_page(Pager* pager, uint32_t page_num);
 Pager* pager_open(const char* filename);
+Cursor* table_find(Table* table, uint32_t key);
+Cursor* table_start(Table* table);
 
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------GENERAL PURPOSE FUNCTIONS--------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+void create_new_root(Table* table, uint32_t right_child_page_num);
+
+static NodeType get_node_type(void* node) {
+  uint8_t value = *((uint8_t*)(node + NODE_TYPE_OFFSET));
+  return (NodeType)value;
+}
+
+static void set_node_type(void* node, NodeType type) {
+  uint8_t value = type;
+  *((uint8_t*)(node + NODE_TYPE_OFFSET)) = value;;
+}
+
+static uint32_t get_unused_page_num(Pager* pager) { 
+  return pager->num_pages; 
+}
+
+static bool is_node_root(void* node) {
+  uint8_t value = *((uint8_t*)(node + IS_ROOT_OFFSET));
+  return (bool)value;
+}
+
+static void set_node_root(void* node, bool is_root) {
+  uint8_t value = is_root;
+  *((uint8_t*)(node + IS_ROOT_OFFSET)) = value;
+}
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------LEAF NODE HELPER FUNCTIONS-----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// LEAF NODES
 
 void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value);
 Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key);
-Cursor* table_find(Table* table, uint32_t key);
-NodeType get_node_type(void* node);
-void set_node_type(void* node, NodeType type);
-uint32_t get_unused_page_num(Pager* pager);
-bool is_node_root(void* node);
-void set_node_root(void* node, bool is_root);
-void create_new_root(Table* table, uint32_t right_child_page_num);
 void leaf_node_split_and_insert(Cursor* c, uint32_t k, Row* r);
-Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key);
-void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key);
-uint32_t internal_node_find_child(void* node, uint32_t key);
-void internal_node_insert(Table* table, uint32_t parent_page_num,uint32_t child_page_num);
 
 
 static uint32_t* leaf_node_num_cells(void* node) {
@@ -191,8 +239,17 @@ static void initialize_leaf_node(void* node) {
 }
 
 
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------INTERNAL NODE HELPER FUNCTIONS-----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// INTERNAL NODES
 
 
+Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key);
+void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key);
+uint32_t internal_node_find_child(void* node, uint32_t key);
+void internal_node_insert(Table* table, uint32_t parent_page_num,uint32_t child_page_num);
 
 static uint32_t* internal_node_num_keys(void* node) {
   void* ptr = node + INTERNAL_NODE_NUM_KEYS_OFFSET;
@@ -234,6 +291,11 @@ static void initialize_internal_node(void* node) {
 }
 
 
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------GENERAL PURPOSE FUNCTIONS 2-----------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 static uint32_t get_node_max_key(void* node) {
   switch (get_node_type(node)) {
     case NODE_INTERNAL:
@@ -249,41 +311,19 @@ static uint32_t* node_parent(void* node) {
   return (uint32_t*)ptr;
 }
 
-// creates new cursors;
-static Cursor* table_start(Table* table){
-    // Cursor* cursor = new Cursor();
-    Cursor* cursor = table_find(table, 0);
-    void* node = get_page(table->get_pager(), cursor->page_num);
-    uint32_t num_cells = *leaf_node_num_cells(node);
-    cursor->end_of_table = (num_cells == 0);
-    return cursor;
-    // cursor->table = table;
-    // cursor->page_num = table->get_root();
 
-    // void* node = get_page(table->get_pager(),cursor->page_num);
-    // uint32_t num_cells = *leaf_node_num_cells(node);
-    // cursor->end_of_table = (num_cells==0);
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------PRINTING FUNCTIONS------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    // return cursor;
-}
 
-// static Cursor* table_end(Table* table){
-//     Cursor* cursor = new Cursor();
-//     cursor->table = table;
-//     cursor->page_num = table->get_root();
-
-//     void* root = get_page(table->get_pager(),table->get_root());
-//     uint32_t cell_num = *leaf_node_num_cells(root);
-//     cursor->cell_num = cell_num;
-//     cursor->end_of_table = true;
-//     return cursor;
-// }
 
 static void indent(uint32_t level) {
   for (uint32_t i = 0; i < level; i++) {
     printf("  ");
   }
 }
+
 
 static void print_tree(Pager* pager, uint32_t page_num, uint32_t indentation_level) {
   void* node = get_page(pager, page_num);
@@ -328,3 +368,6 @@ static void print_constants() {
 }
 
 #endif
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
