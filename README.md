@@ -1,8 +1,8 @@
 # Teensy-Weensy-Database
 In this project, I have tried to clone the sqlite database from Scratch in C++. The two major parts of this project are : a). Parsing of User Input. b). Implementation of B+ trees to understand How database Indexes are Formatted.
 Right now , only one hard coded table is supported in this database in which users can Insert , Select and See the format of database indexing (How the data is stored in disk.).
-This is an open ended project. eg;
-  - SQL compiler is added.
+This is an open ended project.Like:
+  - SQL compiler needs to be added for better parsing.
   - More generic approach is needed so that users can insert their own table.
 So anyone who wants to help in making this library generic is welcomed. 
 
