@@ -17,16 +17,16 @@ So anyone who wants to help in making this library generic is welcomed.
 
 ## Output :
 <p>
-  <img src="Images/s1.png" width="700" height="450">
+  <img src="Images/s1.png" width="600" height="400">
 </p>
 <p>
-  <img src="Images/s2.png" width="700" height="450">
+  <img src="Images/s2.png" width="600" height="400">
 </p>
 <p>
-  <img src="Images/s3.png" width="700" height="450">
+  <img src="Images/s3.png" width="300" height="150">
 </p>
 <p>
-  <img src="Images/s4.png" width="700" height="450">
+  <img src="Images/s4.png" width="600" height="400">
 </p>
 
 
