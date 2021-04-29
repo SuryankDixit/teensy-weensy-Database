@@ -1,76 +1,55 @@
-# Working-part2
-# Memory-Leak-Detector
-In this project, we try to implement a garbage collector for C programs which work on the principle of reachability of objects to detect memory leaks. Through this project, we understand the limitation of such a garbage collector for C like programming languages (which have direct access to underlying memory addresses, unlike Java/python) and analyze its limitations and cost for being an inbuilt feature of C-like language.
+# Teensy-Weensy-Database
+In this project, I have tried to clone the sqlite database from Scratch in C++. The two major parts of this project are : a). Parsing of User Input. b). Implementation of B+ trees to understand How database Indexes are Formatted.
+Right now , only one hard coded table is supported in this database in which users can Insert , Select and See the format of database indexing (How the data is stored in disk.).
+This is an open ended project. eg;
+  - SQL compiler is added.
+  - More generic approach is needed so that users can insert their own table.
+So anyone who wants to help in making this library generic is welcomed. 
 
 
-## Compile
+## Compile :
   * make           
-  * g++ -c -I db_lib main.cpp -o main.o
-  * g++ main.o -o exe -L . mydblib.a
-**make** This command will build the 
+**make** : This command will create the static library of database files which are stored in db_lib folder and link that library with the main.cpp file which acts as an application file to work with this database.
 
-## Run the program as :
-  * ./exe
+## Run :
+  * ./exe (add name of your database as an argument)
 
 ## Documentation:
-Start writing your code from test-app.c file and implement your code. Compile memory-leak.c file and add memory-leak.h file where-ever needed.
+Table provided in this database is of the type - Id(Integer), Name(String), Email(String)
+There are 2 methods to interact with the library.
 
-  * **Step 1** : Initialize a new structure database :
-    * struct_db_t *struct_db = calloc(1, sizeof(struct_db_t));
-    * mld_init_primitive_data_types_support(struct_db);
+### Method 1 : Use database as a Read Evaluate Print Loop:
+  - Navigate to main.cpp file and include connect.h in this.
+  - Inside main function:
+    - Create an object of type database as : **database* db = new database;**
+    - Call **connect_db_console()** using pointer object declared in the first step as : **db->connect_db(argc,argv,db);**
+  - Compile and Run.
+  - This will provide you a console to interact with database.
+  -  Currently this library provides these functions to work on terminal:
+    - **insert**  (Inserts data in the database)
+    - **select**  (Dumps all the data present in database)
+    - **.btree**  (Shows to B+ tree structure of data: How data is stored in the database)
+    - **.exit**   (Commits all the data in disk , closes database connection and terminates the console)
 
-  * **Step 2** : Create structure record for structure that you have declared:
-    * static field_info_t emp_fields[] = {
-    *    FIELD_INFO(emp_t, emp_name, CHAR,    0),
-    *    FIELD_INFO(emp_t, emp_id,   UINT32,  0),
-    *    FIELD_INFO(emp_t, age,      UINT32,  0),
-    *    FIELD_INFO(emp_t, mgr,      OBJ_PTR, emp_t),
-    *    FIELD_INFO(emp_t, salary,   FLOAT, 0)};
+### Method 2 :  Link library with a program:
+  - Functions declared in **connect.h** header file can be used by the programmers to interact.
+  - Navigate to main.cpp file and include connect.h header file in this.
+  - Inside main function:
+    - Create an object of type database as : **database* db = new database;**
+    - Call **connect_db()** using pointer object declared in the first step as : **db->connect_db(argc,argv,db);**
+    - This function opens a connection to the database.
+    - This will provide you a console to interact with database.
+    -  Currently this library provides these functions:
+      - **db->insert()**  (Inserts data in the database)
+      - **db->print_db()**  (Dumps all the data present in database)
+      - **db->print_tree()**  (Shows to B+ tree structure of data: How data is stored in the database)
+      - **db->close_db()**   (Commits all the data in disk , closes database connection and terminates the console)
 
-  * **Step 3** : Register the structure in structure database
-    * REGISTER_STRUCTURE(struct_db, emp_t, emp_fields);
-
-  * **Step 4** : Print structure database
-    * print_structure_db(struct_db);
-
-  * **Step 5** : Initialize a new Object database :
-    * object_db_t *object_db = calloc(1, sizeof(object_db_t));
-    * object_db->struct_db = struct_db;
-    
-  * **Step 6** : Create objects, equivalent to standard 
-    * Use **xcalloc** instead of calloc and malloc.
-    * void *ptr = xcalloc(object_db_t *object_db, char *struct_name, int units);
-
-  * **Step 7** :
-    * Choose Root objects in the hierarchy of your data structures.
-    * mld_set_dynamic_object_as_root(object_db, abhishek);
-
-  * **Step 8** :
-    * print_object_db(object database pointer);
-    
-  * **Step 9** :
-    * run_mld_algorithm(object_db);
-    * report_leaked_objects(object_db);
-
-## Implementation Details :
-<p>
-  <img src="Screenshots/s2.jpg" width="700" height="450">
-</p>
-<p>
-  <img src="Screenshots/s1.jpg" width="700" height="450">
-</p>
-
-## Limitations :
-  * Storing Pointers to Non-Pointer data types will is not handled.
-  * Indirect Reference to objects is not valid.
-  * Does not allow Embedded Object Declaration.
-  * This library cannot handle unions because unions don't have fixed size.
-  * **This library is equivalent to Java Garbage Collector if we write programs in Java Style**
-
+<!-- 
 ## Output :
 <p>
   <img src="Screenshots/s3.png" width="700" height="450">
 </p>
 <p>
   <img src="Screenshots/s4.png" width="700" height="450">
-</p>
+</p> -->
