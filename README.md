@@ -39,11 +39,11 @@ There are 2 methods to interact with the library.
     * Call **connect_db()** using pointer object declared in the first step as : **db->connect_db(argc,argv,db);**
   * This function opens a connection to the database.
   * This will provide you a console to interact with database.
-  *  Currently this library provides these functions
-      * **db->insert()**  (Inserts data in the database)
-      * **db->print_db()**  (Dumps all the data present in database)
-      * **db->print_tree()**  (Shows to B+ tree structure of data: How data is stored in the database)
-      * **db->close_db()**   (Commits all the data in disk , closes database connection and terminates the console)
+  * Currently this library provides these functions
+    * **db->insert()**  (Inserts data in the database)
+    * **db->print_db()**  (Dumps all the data present in database)
+    * **db->print_tree()**  (Shows to B+ tree structure of data: How data is stored in the database)
+    * **db->close_db()**   (Commits all the data in disk , closes database connection and terminates the console)
 
 <!-- 
 ## Output :
