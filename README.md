@@ -14,6 +14,22 @@ So anyone who wants to help in making this library generic is welcomed.
 ## Run :
   * ./exe (add name of your database as an argument)
 
+
+## Output :
+<p>
+  <img src="Images/s1.png" width="700" height="450">
+</p>
+<p>
+  <img src="Images/s2.png" width="700" height="450">
+</p>
+<p>
+  <img src="Images/s3.png" width="700" height="450">
+</p>
+<p>
+  <img src="Images/s4.png" width="700" height="450">
+</p>
+
+
 ## Documentation:
 Table provided in this database is of the type - Id(Integer), Name(String), Email(String)
 There are 2 methods to interact with the library.
@@ -44,12 +60,3 @@ There are 2 methods to interact with the library.
     * **db->print_db()**  (Dumps all the data present in database)
     * **db->print_tree()**  (Shows to B+ tree structure of data: How data is stored in the database)
     * **db->close_db()**   (Commits all the data in disk , closes database connection and terminates the console)
-
-<!-- 
-## Output :
-<p>
-  <img src="Screenshots/s3.png" width="700" height="450">
-</p>
-<p>
-  <img src="Screenshots/s4.png" width="700" height="450">
-</p> -->
