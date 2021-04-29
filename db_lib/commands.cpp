@@ -29,7 +29,6 @@ MetaCommandResults meta_command(string &s,Command* c,Table* table){
 
 PrepareCommand Command:: prepare_insert_command(string &s,Command* c){
     c->type = INSERT_COMMAND;
-
     vector <string> tokens;
       
     // stringstream class check1 
@@ -40,8 +39,11 @@ PrepareCommand Command:: prepare_insert_command(string &s,Command* c){
     // Tokenizing w.r.t. space ' ' 
     while(getline(check1, intermediate, ' ')) 
     { 
+        // cout<<intermediate<<" ";
         tokens.push_back(intermediate); 
     }
+    cout<<endl;
+
     int n = tokens.size();
     if(n!=4){
         return COMMAND_SYNTAX_ERROR;

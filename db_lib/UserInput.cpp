@@ -19,6 +19,14 @@ void UserInput:: read_input(UserInput *obj){
   return ;
 }
 
+void UserInput:: fill_buffer(UserInput *obj,string &command){
+  obj->buffer = command;
+  // cout<<obj->buffer<<endl;
+  ssize_t len = obj->buffer.size();
+  obj->buffer_len = len;
+  return;
+}
+
 void UserInput:: check_user_input(UserInput* obj,Table* table){
   string input = obj->buffer;
   int command_parsed_successfully=0;

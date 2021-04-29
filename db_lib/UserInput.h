@@ -17,6 +17,7 @@ public:
 
   ~UserInput(){}
 
+  void fill_buffer(UserInput*, string&);
   void read_input(UserInput*);
   void check_user_input(UserInput*,Table*);
 };
