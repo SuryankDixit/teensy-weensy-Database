@@ -7,9 +7,9 @@ This is an open ended project. eg;
 So anyone who wants to help in making this library generic is welcomed. 
 
 
-## Compile :
-  * make           
-**make** : This command will create the static library of database files which are stored in db_lib folder and link that library with the main.cpp file which acts as an application file to work with this database.
+## Compile :    
+**make** : 
+  * This command will create the static library of database files which are stored in db_lib folder and link that library with the main.cpp file which acts as an application file to work with this database.
 
 ## Run :
   * ./exe (add name of your database as an argument)
@@ -19,31 +19,31 @@ Table provided in this database is of the type - Id(Integer), Name(String), Emai
 There are 2 methods to interact with the library.
 
 ### Method 1 : Use database as a Read Evaluate Print Loop:
-  - Navigate to main.cpp file and include connect.h in this.
-  - Inside main function:
-    - Create an object of type database as : **database* db = new database;**
-    - Call **connect_db_console()** using pointer object declared in the first step as : **db->connect_db(argc,argv,db);**
-  - Compile and Run.
-  - This will provide you a console to interact with database.
-  -  Currently this library provides these functions to work on terminal:
-    - **insert**  (Inserts data in the database)
-    - **select**  (Dumps all the data present in database)
-    - **.btree**  (Shows to B+ tree structure of data: How data is stored in the database)
-    - **.exit**   (Commits all the data in disk , closes database connection and terminates the console)
+  * Navigate to main.cpp file and include connect.h in this.
+  * Inside main function:
+    * Create an object of type database as : **database* db = new database;**
+    * Call **connect_db_console()** using pointer object declared in the first step as : **db->connect_db(argc,argv,db);**
+  * Compile and Run.
+  * This will provide you a console to interact with database.
+  *  Currently this library provides these functions to work on terminal:
+    * **insert**  (Inserts data in the database)
+    * **select**  (Dumps all the data present in database)
+    * **.btree**  (Shows to B+ tree structure of data: How data is stored in the database)
+    * **.exit**   (Commits all the data in disk , closes database connection and terminates the console)
 
 ### Method 2 :  Link library with a program:
-  - Functions declared in **connect.h** header file can be used by the programmers to interact.
-  - Navigate to main.cpp file and include connect.h header file in this.
-  - Inside main function:
-    - Create an object of type database as : **database* db = new database;**
-    - Call **connect_db()** using pointer object declared in the first step as : **db->connect_db(argc,argv,db);**
-    - This function opens a connection to the database.
-    - This will provide you a console to interact with database.
-    -  Currently this library provides these functions:
-      - **db->insert()**  (Inserts data in the database)
-      - **db->print_db()**  (Dumps all the data present in database)
-      - **db->print_tree()**  (Shows to B+ tree structure of data: How data is stored in the database)
-      - **db->close_db()**   (Commits all the data in disk , closes database connection and terminates the console)
+  * Functions declared in **connect.h** header file can be used by the programmers to interact.
+  * Navigate to main.cpp file and include connect.h header file in this.
+  * Inside main function:
+    * Create an object of type database as : **database* db = new database;**
+    * Call **connect_db()** using pointer object declared in the first step as : **db->connect_db(argc,argv,db);**
+    * This function opens a connection to the database.
+    * This will provide you a console to interact with database.
+    *  Currently this library provides these functions:
+      * **db->insert()**  (Inserts data in the database)
+      * **db->print_db()**  (Dumps all the data present in database)
+      * **db->print_tree()**  (Shows to B+ tree structure of data: How data is stored in the database)
+      * **db->close_db()**   (Commits all the data in disk , closes database connection and terminates the console)
 
 <!-- 
 ## Output :
