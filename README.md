@@ -25,7 +25,7 @@ There are 2 methods to interact with the library.
     * Call **connect_db_console()** using pointer object declared in the first step as : **db->connect_db(argc,argv,db);**
   * Compile and Run.
   * This will provide you a console to interact with database.
-  *  Currently this library provides these functions to work on terminal
+  * Currently this library provides these functions to work on termina:
     * **insert**  (Inserts data in the database)
     * **select**  (Dumps all the data present in database)
     * **.btree**  (Shows to B+ tree structure of data: How data is stored in the database)
