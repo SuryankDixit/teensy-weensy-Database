@@ -35,6 +35,7 @@ db6
 *.lib
 
 # Executables
+exe
 *.exe
 *.out
 *.app

@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
-#include "UserInput.h"
-#include "table.h"
+#include "db_lib/UserInput.h"
+#include "db_lib/table.h"
 #include <stdio.h>
 #include <sys/types.h>
 
