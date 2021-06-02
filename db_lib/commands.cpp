@@ -14,6 +14,8 @@ MetaCommandResults Command:: check_meta_command(string &input,Table* table){
         cout<<"Tree:\n";
         print_tree(table->get_pager(),0,0);
         return META_COMMAND_SUCCESS;
+    }else if(input.size()==0){
+        return META_COMMAND_SUCCESS;
     }else if(input == ".constants"){
         cout<<"Constants:\n";
         print_constants();
@@ -42,7 +44,7 @@ PrepareCommand Command:: prepare_insert_command(string &s,Command* c){
         // cout<<intermediate<<" ";
         tokens.push_back(intermediate); 
     }
-    cout<<endl;
+    // cout<<endl;
 
     int n = tokens.size();
     if(n!=4){
@@ -96,6 +98,9 @@ PrepareCommand prepare_db_command(string &input, Command* command){
     if(input.substr(0,6)=="select"){
         return command->prepare_select_command(input,command);
     }
+    if(input.substr(0,6)=="search"){
+        return command->prepare_search_command(input,command);
+    }
 
     return COMMAND_UNRECOGNIZED;
 }
@@ -122,7 +127,7 @@ ExecuteCommand Command :: execute_insert_command(Command* c,Table* t){
     // cout<<cursor->cell_num<<"   "<<num_cells<<endl;
     if(cursor->cell_num < num_cells){
         uint32_t key_at_index = *leaf_node_key(node, cursor->cell_num);
-        cout<<key_at_index<<"   "<<new_key<<endl;
+        // cout<<key_at_index<<"   "<<new_key<<endl;
         if (key_at_index == new_key) {
         return EXECUTE_DUPLICATE_KEY;
      }
@@ -158,7 +163,100 @@ ExecuteCommand execute_command(Command* command, Table* table){
         case(SELECT_COMMAND):
             return command->execute_select_command(command,table);
             break;
+        case(SEARCH_COMMAND):
+            return command->execute_search_command(command,table);
+            break;
     }
+}
+
+
+ExecuteCommand Command :: execute_search_command(Command* c,Table* t){
+
+    Row *row = &(c->row);
+    Cursor* cursor = new Cursor();
+    uint32_t new_key = row->id;
+    cursor = table_find(t,new_key);
+
+    void* node = get_page(t->get_pager(), cursor->page_num);
+    uint32_t num_cells = *leaf_node_num_cells(node);    // number of cells in node
+
+    if(cursor->cell_num < num_cells){
+        uint32_t key_at_index = *leaf_node_key(node, cursor->cell_num);
+        if (key_at_index == new_key) {
+            // return EXECUTE_DUPLICATE_KEY;
+            Row row_;
+            // Cursor* cursor = new Cursor();
+            // cursor = table_start(t);
+
+            // while(!cursor->end_of_table) {
+            c->row.deserialize_data(cursor->cursor_position(cursor),&row_);
+            c->row.print_row(&row_);
+            return EXECUTE_KEY_MATCH;
+            // cursor->advance_cursor(cursor);
+            // }
+        }
+    }
+    free(cursor);
+
+    return EXECUTE_KEY_MISMATCH;
+}
+
+PrepareCommand Command:: prepare_search_command(string &s,Command* c){
+    c->type = SEARCH_COMMAND;
+
+    vector <string> tokens;
+      
+    // stringstream class check1 
+    stringstream check1(s); 
+      
+    string intermediate; 
+      
+    // Tokenizing w.r.t. space ' ' 
+    while(getline(check1, intermediate, ' ')) 
+    { 
+        // cout<<intermediate<<" ";
+        tokens.push_back(intermediate); 
+    }
+    // for(auto x:tokens){
+        // cout<<x<<" ";
+    // }
+    // cout<<endl;
+
+    int n = tokens.size();
+    if(n!=4){
+        // cout<<"Hi1";
+        return COMMAND_SYNTAX_ERROR;
+    }
+    string id_string = tokens[n-1];
+    string equal = tokens[n-2];
+    string id_ = tokens[n-3];
+
+    int id=0;
+    try{
+        id = stoi(id_string);
+    }catch(exception &err){
+      /*  cout << "Invalid query format "<<endl;
+        cout<<"Table Structure is : int>0     string(32)      string(255)\n";
+        cout<<"Exiting..."<<endl;
+        usleep(10000);
+        exit(0);
+        */
+    //    cout<<"Hi2";
+       return COMMAND_SYNTAX_ERROR;
+    }
+
+    if(equal != "equals"){
+        cout<<"Hi3";
+        return COMMAND_SYNTAX_ERROR;
+    }
+    if(id_ != "id"){
+        // cout<<"Hi4";
+        return COMMAND_SYNTAX_ERROR;
+    }
+
+    c->row.id = (uint32_t)id;
+
+    return COMMAND_SUCCESS;
 }
 
 

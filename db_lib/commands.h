@@ -24,12 +24,15 @@ typedef enum{
     EXECUTE_SUCCESS,
     EXECUTE_TABLE_FULL,
     EXECUTE_INVALID_COMMAND,
+    EXECUTE_KEY_MATCH,
+    EXECUTE_KEY_MISMATCH,
     EXECUTE_DUPLICATE_KEY
 } ExecuteCommand;
 
 typedef enum{
     INSERT_COMMAND,
-    SELECT_COMMAND
+    SELECT_COMMAND,
+    SEARCH_COMMAND
 } CommandType;
 
 class Command {
@@ -41,8 +44,10 @@ public:
     MetaCommandResults check_meta_command(string &s,Table*);
     PrepareCommand prepare_insert_command(string &s,Command* c);
     PrepareCommand prepare_select_command(string &s,Command* c);
+    PrepareCommand prepare_search_command(string &s,Command* c);
     ExecuteCommand execute_insert_command(Command* c,Table* t);
     ExecuteCommand execute_select_command(Command* c,Table* t);
+    ExecuteCommand execute_search_command(Command* c,Table* t);
     CommandType check_command_type(Command* c);
     void test();
 };

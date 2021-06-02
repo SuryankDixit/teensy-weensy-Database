@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
 
   database* db = new database;
   db->connect_db_console(argc,argv,db);
+  // db->connect_db(argc,argv,db);
   // student obj[] = {
   //         student(1,"suryank","sk@gmail.com"),
   //         student(2,"suryank","sk@gmail.com"),
@@ -40,9 +41,9 @@ int main(int argc, char* argv[]) {
   //         student(19,"suryank","sk@gmail.com"),
   // };
 
-  // // for(int i=0;i<18;i++){
-  // //   db->insert(obj[i].id,obj[i].name,obj[i].email,db);
-  // // }
+  // for(int i=0;i<18;i++){
+  //   db->insert(obj[i].id,obj[i].name,obj[i].email,db);
+  // }
 
   // db->print_db(db);
   // db->print_tree(db);

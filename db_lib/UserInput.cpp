@@ -12,8 +12,12 @@ void free_object(UserInput *obj){
 }
 
 void UserInput:: read_input(UserInput *obj){
+
   getline(cin,obj->buffer);
-  
+  // if(obj->buffer.size()==0){
+  //   // getline(cin,obj->buffer);
+  //   return;
+  // }
   ssize_t len = obj->buffer.size();
   obj->buffer_len = len;
   return ;
@@ -37,7 +41,7 @@ void UserInput:: check_user_input(UserInput* obj,Table* table){
         free_object(obj);
         exit(EXIT_SUCCESS);
   }
-  if(input[0] == '.'){
+  if(input[0] == '.' || input.size()==0){
     switch(meta_command(input,&command,table)){
       case(META_COMMAND_SUCCESS):
         break;
@@ -73,7 +77,13 @@ void UserInput:: check_user_input(UserInput* obj,Table* table){
           cout<<"Table Full Error\n";
           break;
         case (EXECUTE_DUPLICATE_KEY):
-          cout<<"Duplicate Key Insertion\n";
+          cout<<"Duplicate Key Insertion. Record couldn't be inserted\n";
+          break;
+        case (EXECUTE_KEY_MATCH):
+          cout<<"Record Found.\n";
+          break;
+        case (EXECUTE_KEY_MISMATCH):
+          cout<<"Record Doesn't Exist.\n";
           break;
       }
     }
