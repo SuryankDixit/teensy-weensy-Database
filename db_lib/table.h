@@ -2,6 +2,7 @@
 #define _TABLE_
 
 #include<bits/stdc++.h>
+#include"../css.h"
 using namespace std;
 
 #define NAME_SIZE 31
@@ -333,7 +334,7 @@ static void print_tree(Pager* pager, uint32_t page_num, uint32_t indentation_lev
     case (NODE_LEAF):
       num_keys = *leaf_node_num_cells(node);
       indent(indentation_level);
-      printf("- leaf (size %d)\n", num_keys);
+      printf(ANSI_COLOR_YELLOW"- leaf (size %d)\n"ANSI_COLOR_RESET, num_keys);
       for (uint32_t i = 0; i < num_keys; i++) {
         indent(indentation_level + 1);
         printf("- %d\n", *leaf_node_key(node, i));
@@ -342,13 +343,19 @@ static void print_tree(Pager* pager, uint32_t page_num, uint32_t indentation_lev
     case (NODE_INTERNAL):
       num_keys = *internal_node_num_keys(node);
       indent(indentation_level);
-      printf("- internal (size %d)\n", num_keys);
+      printf(ANSI_COLOR_GREEN"----------------------------------\n"ANSI_COLOR_RESET);
+      printf(ANSI_COLOR_YELLOW"- internal (size %d)\n"ANSI_COLOR_RESET, num_keys);
+      printf(ANSI_COLOR_GREEN"----------------------------------\n"ANSI_COLOR_RESET);
       for (uint32_t i = 0; i < num_keys; i++) {
         child = *internal_node_child(node, i);
         print_tree(pager, child, indentation_level + 1);
 
         indent(indentation_level + 1);
-        printf("- key %d\n", *internal_node_key(node, i));
+        printf(ANSI_COLOR_GREEN"-----------\n"ANSI_COLOR_RESET);
+        indent(indentation_level + 1);
+        printf(ANSI_COLOR_YELLOW"- key %d\n"ANSI_COLOR_RESET, *internal_node_key(node, i));
+        indent(indentation_level + 1);
+        printf(ANSI_COLOR_GREEN"-----------\n"ANSI_COLOR_RESET);
       }
       child = *internal_node_right_child(node);
       print_tree(pager, child, indentation_level + 1);

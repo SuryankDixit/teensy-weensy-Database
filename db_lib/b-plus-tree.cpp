@@ -131,7 +131,7 @@ uint32_t internal_node_find_child(void* node, uint32_t key) {
 Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key) {
   void* node = get_page(table->get_pager(), page_num);
 
-  cout<<"        Accessing Internal Node ......"<<endl;
+  cout<<ANSI_COLOR_YELLOW"        Accessing Internal Node Number : "<<page_num<<ANSI_COLOR_RESET<<endl;
 
   uint32_t child_index = internal_node_find_child(node, key);
   uint32_t child_num = *internal_node_child(node, child_index);
@@ -244,13 +244,14 @@ Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key) {
   void* node = get_page(table->get_pager(), page_num);
   uint32_t num_cells = *leaf_node_num_cells(node);
 
-  cout<<"        Accessing Leaf Node ......"<<endl;
-
   // Cursor* cursor = malloc(sizeof(Cursor));
   Cursor* cursor = new Cursor;
   cursor->table = table;
   cursor->page_num = page_num;
   cursor->end_of_table = false;
+
+  cout<<ANSI_COLOR_YELLOW"        Accessing Leaf Node Number : "<<page_num<<ANSI_COLOR_RESET<<endl;
+  cout<<ANSI_COLOR_CYAN"        ------------------------------------------"<<ANSI_COLOR_RESET<<endl;
 
   // Binary search
   uint32_t min_index = 0;
@@ -286,7 +287,8 @@ Cursor* table_find(Table* table, uint32_t key) {
   uint32_t root_page_num = table->get_root();
   void* root_node = get_page(table->get_pager(), root_page_num);
 
-  cout<<"        Root Page Number : "<<root_page_num<<endl;
+  cout<<ANSI_COLOR_CYAN"        ------------------------------------------"<<ANSI_COLOR_RESET<<endl;
+  cout<<ANSI_COLOR_YELLOW"        Accessing Root Node...... "<<ANSI_COLOR_RESET<<endl;
 
   if (get_node_type(root_node) == NODE_LEAF) {
     return leaf_node_find(table, root_page_num, key);

@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #include "UserInput.h"
 #include "commands.h"
+#include "../css.h"
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -56,13 +57,13 @@ void UserInput:: check_user_input(UserInput* obj,Table* table){
         command_parsed_successfully=1;
         break;
       case(COMMAND_UNRECOGNIZED):
-           cout<<"Unrecognized Command Entered: "<<input<<endl;
+           cout<<ANSI_COLOR_RED<<"Unrecognized Command Entered: "<<input<<ANSI_COLOR_RESET<<endl;
         break;
       case(COMMAND_SYNTAX_ERROR):
-        cout<<"Syntax Error"<<endl;
+        cout<<ANSI_COLOR_RED<<"Syntax Error"<<ANSI_COLOR_RESET<<endl;
         break;
       case(COMMAND_TOO_LONG):
-        cout<<"Command too long/short"<<input<<endl;
+        cout<<ANSI_COLOR_RED<<"Command too long/short"<<input<<ANSI_COLOR_RESET<<endl;
         break;
       default: break;
     }
@@ -71,19 +72,19 @@ void UserInput:: check_user_input(UserInput* obj,Table* table){
     if(command_parsed_successfully){
       switch(execute_command(&command,table)){
         case (EXECUTE_SUCCESS):
-          cout<<"Executed\n";
+          cout<<ANSI_COLOR_GREEN<<"Executed\n"<<ANSI_COLOR_RESET;
           break;
         case (EXECUTE_TABLE_FULL):
-          cout<<"Table Full Error\n";
+          cout<<ANSI_COLOR_RED<<"Table Full Error\n"<<ANSI_COLOR_RESET;
           break;
         case (EXECUTE_DUPLICATE_KEY):
-          cout<<"Duplicate Key Insertion. Record couldn't be inserted\n";
+          cout<<ANSI_COLOR_RED<<"Duplicate Key Insertion. Record couldn't be inserted\n"<<ANSI_COLOR_RESET;
           break;
         case (EXECUTE_KEY_MATCH):
-          cout<<"Record Found.\n";
+          cout<<ANSI_COLOR_GREEN<<"Record Found.\n"<<ANSI_COLOR_RESET;
           break;
         case (EXECUTE_KEY_MISMATCH):
-          cout<<"Record Doesn't Exist.\n";
+          cout<<ANSI_COLOR_RED<<"Record Doesn't Exist.\n"<<ANSI_COLOR_RESET;
           break;
       }
     }
