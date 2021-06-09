@@ -17,16 +17,16 @@ So anyone who wants to help in making this library generic is welcomed.
 
 ## Output :
 <p>
-  <img src="Images/s1.png" width="600" height="400">
+  <img src="Images/p1.png" width="600" height="400">
 </p>
 <p>
-  <img src="Images/s2.png" width="600" height="400">
+  <img src="Images/p2.png" width="600" height="400">
 </p>
 <p>
-  <img src="Images/s3.png" width="300" height="150">
+  <img src="Images/p3.png" width="600" height="450">
 </p>
 <p>
-  <img src="Images/s4.png" width="600" height="400">
+  <img src="Images/p4.png" width="600" height="400">
 </p>
 
 
@@ -44,6 +44,7 @@ There are 2 methods to interact with the library.
   * Currently this library provides these functions to work on termina:
     * **insert**  (Inserts data in the database)
     * **select**  (Dumps all the data present in database)
+    * **search**  (Search the record based on the ID)
     * **.btree**  (Shows to B+ tree structure of data: How data is stored in the database)
     * **.exit**   (Commits all the data in disk , closes database connection and terminates the console)
 
